@@ -1,13 +1,14 @@
-
 from fastapi import FastAPI
 from sqlalchemy import text
 
 from app.database.connection import engine
+from app.routers.organizations import router as organizations_router
 from app.routers.user import router as users_router
 
 app = FastAPI(title="Attendance API")
 
 app.include_router(users_router)
+app.include_router(organizations_router)
 
 
 @app.get("/")
@@ -20,15 +21,6 @@ def health_check():
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
-
-        return {
-            "status": "healthy",
-            "database": "connected"
-        }
-
+        return {"status": "healthy", "database": "connected"}
     except Exception:
-        return {
-            "status": "unhealthy",
-            "database": "disconnected"
-        }
-
+        return {"status": "unhealthy", "database": "disconnected"}
